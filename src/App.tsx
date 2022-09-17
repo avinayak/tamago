@@ -12,6 +12,7 @@ import { Grid, IconButton } from "@mui/material";
 import jvoc from "./jvoc.json";
 import KanjiCard from "./KanjiCard";
 import {
+  Fireplace,
   Shuffle,
   ShuffleOnOutlined,
   TuneOutlined,
@@ -50,6 +51,48 @@ function random(seed) {
   var x = Math.sin(seed++) * 10000;
   return x - Math.floor(x);
 }
+
+const days = (date_1, date_2) => {
+  let difference = date_1.getTime() - date_2.getTime();
+  let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+  return TotalDays;
+};
+
+const todayMidnight = () => {
+  var d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+const calculateStreak = (today) => {
+  // const today = new Date();
+  const storedDate = localStorage.getItem("streak_date")
+    ? new Date(localStorage.getItem("streak_date"))
+    : todayMidnight();
+  let streakDays = parseInt(localStorage.getItem("streak_days")) || 0;
+  const ndays = days(today, storedDate);
+  localStorage.setItem("streak_date", today);
+
+  console.log(ndays);
+
+  if (ndays == 0) {
+    return streakDays;
+  } else if (ndays == 1) {
+    streakDays += 1;
+  } else {
+    console.log("Streak Reset", ndays);
+    localStorage.removeItem("streak_date");
+    streakDays = 0;
+  }
+  localStorage.setItem("streak_days", streakDays);
+  return streakDays;
+};
 
 const usePersistedState = (defaultValue, localStorageKey) => {
   const [value, setValue] = React.useState(() => {
@@ -135,10 +178,11 @@ export default function App(props: Props) {
   const cards = shuffled ? shuffle(_cards) : _cards;
 
   const knowsCount = cards.filter((x) => knows[x.w]).length;
-
+  const streak = calculateStreak(addDays(todayMidnight()));
   return (
     <>
       <CssBaseline />
+
       <Settings
         handleClose={handleClose}
         open={open}
@@ -148,9 +192,25 @@ export default function App(props: Props) {
       <AppBar style={{ background: "black " }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            玉子 <sup>β</sup>
+            玉子
           </Typography>
           <LinearProgressWithLabel value={knowsCount} total={cards.length} />
+
+          <IconButton
+            size="large"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              fontSize: 12,
+            }}
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <Fireplace />
+            <span>{streak} Days</span>
+          </IconButton>
 
           <IconButton
             size="large"
@@ -196,6 +256,7 @@ export default function App(props: Props) {
           {cards.map((voc, index) => (
             <Grid item xs={12} sm={12} md={6} key={index}>
               <KanjiCard
+                key={index}
                 voc={voc}
                 showWord={visbility !== "hideWord"}
                 showDetails={visbility !== "hideDetails"}
