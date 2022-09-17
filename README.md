@@ -4,3 +4,5 @@
 # Tamago
 
 Learn Japanese Vocabulary in the natural order it's supposed to be learned. Uses Anki like flash card system.
+
+Demo: https://tamago-study.netlify.app/
