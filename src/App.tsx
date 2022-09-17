@@ -24,29 +24,30 @@ import Settings from "./Settings";
 
 type VisibilityStates = "visible" | "hideWord" | "hideDetails";
 
-function shuffle(input) {    
-  var array = [...input]
-  var m = array.length, t, i;
+function shuffle(input) {
+  var array = [...input];
+  var m = array.length,
+    t,
+    i;
   var seed = 42;
 
   // While there remain elements to shuffle…
   while (m) {
-
     // Pick a remaining element…
-    i = Math.floor(random(seed) * m--);        // <-- MODIFIED LINE
+    i = Math.floor(random(seed) * m--); // <-- MODIFIED LINE
 
     // And swap it with the current element.
     t = array[m];
     array[m] = array[i];
     array[i] = t;
-    ++seed                                     // <-- ADDED LINE
+    ++seed; // <-- ADDED LINE
   }
 
   return array;
 }
 
 function random(seed) {
-  var x = Math.sin(seed++) * 10000; 
+  var x = Math.sin(seed++) * 10000;
   return x - Math.floor(x);
 }
 
@@ -96,6 +97,7 @@ export default function App(props: Props) {
       jlpt: [5],
       percentStart: 0,
       percentEnd: 10,
+      voType: "all",
     },
     "settings"
   );
@@ -119,11 +121,17 @@ export default function App(props: Props) {
 
   const __cards = jvoc.filter((card, i) => settings.jlpt.indexOf(card.j) != -1);
 
-  const _cards = __cards.filter(
-    (_, i) =>
-      i >= ~~((__cards.length * settings.percentStart) / 100) &&
-      i <= ~~((__cards.length * settings.percentEnd) / 100)
-  );
+  const _cards = __cards
+    .filter(
+      (_, i) =>
+        i >= ~~((__cards.length * settings.percentStart) / 100) &&
+        i <= ~~((__cards.length * settings.percentEnd) / 100)
+    )
+    .filter((c) => {
+      if (settings.voType === "kanji") return c.c === "k";
+      else if (settings.voType === "word") return c.c === "w";
+      else return true;
+    });
   const cards = shuffled ? shuffle(_cards) : _cards;
 
   const knowsCount = cards.filter((x) => knows[x.w]).length;
@@ -137,7 +145,7 @@ export default function App(props: Props) {
         settings={settings}
         setSettings={setSettings}
       />
-      <AppBar style={{ background: "#2E3B55" }}>
+      <AppBar style={{ background: "black " }}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             玉子 <sup>β</sup>

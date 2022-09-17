@@ -156,7 +156,6 @@ export default function KanjiCard({
             }}
             style={{
               fontSize: stringLengthToFontSize(voc.w),
-              userSelect: "none",
             }}
           >
             <span style={{ opacity: visibilityOverride && !showWord ? 0 : 1 }}>
@@ -232,7 +231,7 @@ export default function KanjiCard({
               </BasicMenu>
             </span>
           </div>
-          <div style={{ userSelect: "none" }}>
+          <div>
             <div
               className={visibilityOverride && !showDetails && "hidden"}
               onClick={() => {
@@ -263,31 +262,34 @@ export default function KanjiCard({
               </Typography>
             </div>
 
-            {notes[voc.w] && (
-              <textarea
-                defaultValue={notes[voc.w]}
-                onBlur={(e) => {
-                  if (e.currentTarget.value === "") {
-                    const { [voc.w]: _, ...notesW } = notes;
-                    setNotes(notesW);
-                  } else
-                    setNotes({
-                      ...notes,
-                      [voc.w]: e.currentTarget.value,
-                    });
-                }}
-                style={{
-                  width: "100%",
-                  background: pink[50],
-                  border: "none",
-                  marginBottom: 16,
-                  borderRadius: 8,
-                  fontSize: 10,
-                  padding: 8,
-                }}
-                variant="outlined"
-              />
-            )}
+            <div className={visibilityOverride && !showDetails && "hidden"}>
+              {notes[voc.w] && (
+                <textarea
+                  defaultValue={notes[voc.w]}
+                  onBlur={(e) => {
+                    if (e.currentTarget.value === "") {
+                      const { [voc.w]: _, ...notesW } = notes;
+                      setNotes(notesW);
+                    } else
+                      setNotes({
+                        ...notes,
+                        [voc.w]: e.currentTarget.value,
+                      });
+                  }}
+                  style={{
+                    color:
+                      visibilityOverride && !showDetails ? pink[50] : "black",
+                    width: "100%",
+                    background: pink[50],
+                    border: "none",
+                    marginBottom: 16,
+                    borderRadius: 8,
+                    fontSize: 10,
+                    padding: 8,
+                  }}
+                />
+              )}
+            </div>
             <div>
               {
                 <>

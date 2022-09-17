@@ -9,7 +9,15 @@ import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
-import { Checkbox, FormControlLabel, FormGroup, Slider } from "@mui/material";
+import {
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Radio,
+  RadioGroup,
+  Slider,
+} from "@mui/material";
 import { Container } from "@mui/system";
 
 function removeItem<T>(arr: Array<T>, value: T): Array<T> {
@@ -60,6 +68,7 @@ export default function Settings({ handleClose, open, settings, setSettings }) {
     jlpt: [],
     percentStart: 0,
     percentEnd: 10,
+    voType: "all",
   });
 
   React.useEffect(() => {
@@ -125,7 +134,7 @@ export default function Settings({ handleClose, open, settings, setSettings }) {
         <Container>
           <br />
           <Typography variant="h5">JLPT Levels</Typography>
-          <FormGroup>
+          <FormGroup row>
             <JLPTCheck
               level={5}
               localSettings={localSettings}
@@ -153,8 +162,12 @@ export default function Settings({ handleClose, open, settings, setSettings }) {
             />
           </FormGroup>
           <br />
+          <hr />
+          <br />
 
-          <Typography variant="h5">Study Range Percentage</Typography>
+          <Typography variant="h5">
+            Study Range: {value1[0]} - {value1[1]} %
+          </Typography>
           <Slider
             step={5}
             marks
@@ -163,6 +176,39 @@ export default function Settings({ handleClose, open, settings, setSettings }) {
             valueLabelDisplay="auto"
             disableSwap
           />
+          <br />
+          <hr />
+          <br />
+          <Typography variant="h5">Vocabulary Type</Typography>
+          <FormControl>
+            <RadioGroup
+              row
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={localSettings.voType || "all"}
+              name="radio-buttons-group"
+              onChange={(e) =>
+                setLocalSettings({
+                  ...localSettings,
+                  voType: e.target.value,
+                })
+              }
+            >
+              <FormControlLabel value="all" control={<Radio />} label="All" />
+              <FormControlLabel
+                value="kanji"
+                control={<Radio />}
+                label="Only Kanji"
+              />
+              <FormControlLabel
+                value="word"
+                control={<Radio />}
+                label="Only Words"
+              />
+            </RadioGroup>
+          </FormControl>
+          <br />
+          <hr />
+          <br />
         </Container>
       </Dialog>
     </div>
